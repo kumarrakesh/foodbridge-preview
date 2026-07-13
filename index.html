@@ -1,0 +1,75 @@
+<!doctype html>
+<!--
+  DISCOVERY WIRING — Foodbridge Module Purchase
+  ---------------------------------------------------------
+  This file is the WIRING only — the hub + transition map. It holds NO screen
+  content; screens live in screens/. The transition map below is the proto-FSM
+  that SSOT-1 (state-machine) and SSOT-5 (workflow) are later derived from.
+  Rules:
+  - HTML/CSS/vanilla JS only. No frameworks, no build step, no real API calls.
+  - Screens are standalone-openable and link to each other; this hub is the entry.
+  - Use seed-data/seed.js (window.SEED) for any data, loaded via <script src>.
+  - Disposable. When a version is accepted, snapshot the whole folder
+    (screens/ + index.html + seed-data) into versions/vN/.
+  - Nothing here is imported by development/. It only informs the SSOTs.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Foodbridge Module Purchase — Discovery (wiring)</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body { font-family: system-ui, sans-serif; margin: 0; padding: 2rem; max-width: 820px; line-height: 1.5; }
+    h1 { font-size: 1.3rem; }
+    h2 { font-size: 1rem; margin-top: 1.6rem; }
+    .note { color: #666; font-size: 0.85rem; }
+    .warn { background:#FFF7ED; border:1px solid #F97316; color:#9A3412; padding:.6rem .8rem; border-radius:8px; font-size:.85rem; }
+    a { color: #1B6272; font-weight: 600; }
+    code { background:#F0F2F5; padding:1px 6px; border-radius:5px; }
+    table { border-collapse: collapse; width: 100%; font-size: 0.9rem; margin-top:.4rem; }
+    th, td { border: 1px solid #ddd; padding: 0.45rem 0.6rem; text-align: left; vertical-align: top; }
+    th { background:#F0F2F5; }
+    .start { display:inline-block; margin:.4rem 0 .2rem; background:#1B6272; color:#fff; padding:.6rem 1rem; border-radius:10px; text-decoration:none; }
+  </style>
+</head>
+<body>
+  <h1>Foodbridge Module Purchase — Discovery Prototype (wiring hub)</h1>
+  <p class="note"><strong>Iteration goal (addendum-005):</strong> can a user scan open settlements,
+  understand a difference in one sentence, and resolve it (or many at once) — with no colour-only
+  status and no dense form? Tests the reference-mirrored loop
+  <em>list → inline Expected·Actual·Difference expand → View &amp; Resolve drawer</em>.</p>
+
+  <p class="note">Screens load their data from <code>seed-data/seed.js</code> (as <code>window.SEED</code>,
+  via <code>&lt;script src&gt;</code>) — so you can <strong>open a screen by double-clicking it</strong>;
+  no server needed.</p>
+
+  <h2>Screens</h2>
+  <ul>
+    <li><a href="screens/screen-01.html">Screen 01 — Settlement Workspace</a> — the whole loop on one
+      screen (inline-first): settlement list · KPI tiles · stream filter · inline mismatch expand ·
+      View &amp; Resolve drawer (Details / Evidence / Activity Log / Comments) · reason + impact preview ·
+      Resolve &amp; Bulk Resolve · resolved/ledger success state.</li>
+  </ul>
+  <p><a class="start" href="screens/screen-01.html">▶ Start the flow →</a></p>
+
+  <h2>Transition map (→ SSOT-1 state-machine / SSOT-5 workflow)</h2>
+  <table>
+    <thead><tr><th>From screen / state</th><th>Event</th><th>To</th></tr></thead>
+    <tbody>
+      <tr><td>Settlement List</td><td>Expand a settlement row</td><td>Inline mismatch-items table (same screen)</td></tr>
+      <tr><td>Mismatch item (OPEN)</td><td>View &amp; Resolve</td><td>Resolve drawer — Details tab</td></tr>
+      <tr><td>Resolve drawer</td><td>Switch tab</td><td>Evidence / Activity Log / Comments (read + comment)</td></tr>
+      <tr><td>Resolve drawer</td><td>Choose a reason code</td><td>Impact preview shown · Resolve enabled (P-D4 gate)</td></tr>
+      <tr><td>Resolve drawer</td><td>Resolve</td><td>Resolved → ledger ref <code>SET-RES-…</code> → item CLOSED (or carry-forward stays OPEN)</td></tr>
+      <tr><td>Resolve drawer</td><td>Keep Pending</td><td>Back to list — item stays OPEN</td></tr>
+      <tr><td>Resolved success</td><td>Next item</td><td>Resolve drawer for next open item in the settlement</td></tr>
+      <tr><td>Mismatch items</td><td>Select rows → Bulk Resolve</td><td>Bulk Resolve drawer (one reason for many)</td></tr>
+      <tr><td>Bulk Resolve drawer</td><td>Resolve All</td><td>Bulk resolved → ledger ref <code>SET-BULK-…</code> → selected items CLOSED</td></tr>
+    </tbody>
+  </table>
+  <p class="note">Statuses exercised (→ SSOT-1): OPEN · UNDER_VERIFICATION · UNDER_INVESTIGATION ·
+  AWAITING_APPROVAL · PARTIALLY_RECOVERED · RECONCILED. Reason codes &amp; impact previews (→ SSOT-2 /
+  SSOT-5) come from <a href="seed-data/seed.js">seed-data/seed.js</a>.</p>
+</body>
+</html>
